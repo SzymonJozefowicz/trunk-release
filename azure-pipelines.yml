@@ -11,7 +11,8 @@ pr: none
 variables:
   - name: TAG
     value: $[format('1.0.{0}',variables['Build.BuildId'])]
-
+  - name: RELEASE
+    value: "Release $[format('1.0.{0}',variables['Build.BuildId'])]"
 pool:
   vmImage: ubuntu-latest
 
@@ -29,7 +30,7 @@ steps:
     target: '$(Build.SourceVersion)'
     tagSource: 'userSpecifiedTag'
     tag: '$(TAG)'
-    title: 'Release ${TAG}'
+    title: '${RELEASE}'
     releaseNotesSource: 'inline'
     releaseNotesInline: 'Release $(Build.SourceVersion)'
     changeLogCompareToRelease: 'lastFullRelease'

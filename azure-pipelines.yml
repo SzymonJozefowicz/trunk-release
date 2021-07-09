@@ -6,6 +6,8 @@
 trigger:
 - main
 
+pr: none
+
 pool:
   vmImage: ubuntu-latest
 
@@ -21,9 +23,22 @@ steps:
     action: 'create'
     target: '$(Build.SourceVersion)'
     tagSource: 'userSpecifiedTag'
-    tag: '$(Build.SourceVersion)'
+    tag: 'v1.0.7'
     title: 'Release'
     releaseNotesSource: 'inline'
     releaseNotesInline: 'Release $(Build.SourceVersion)'
     changeLogCompareToRelease: 'lastFullRelease'
     changeLogType: 'commitBased'
+# - task: GitHubRelease@1
+#   inputs:
+#     gitHubConnection: 'szymon-github'
+#     repositoryName: '$(Build.Repository.Name)'
+#     action: 'create'
+#     target: '$(Build.SourceVersion)'
+#     tagSource: 'userSpecifiedTag'
+#     tag: '$(Build.SourceVersion)'
+#     title: 'Release'
+#     releaseNotesSource: 'inline'
+#     releaseNotesInline: 'Release $(Build.SourceVersion)'
+#     changeLogCompareToRelease: 'lastFullRelease'
+#     changeLogType: 'commitBased'

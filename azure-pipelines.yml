@@ -11,8 +11,7 @@ pr: none
 variables:
   - name: TAG
     value: $[format('1.0.{0}',variables['Build.BuildId'])]
-  - name: RELEASE
-    value: "Release $[format('1.0.{0}',variables['Build.BuildId'])]"
+
 pool:
   vmImage: ubuntu-latest
 
@@ -35,10 +34,3 @@ steps:
     releaseNotesFilePath: 'release.md'
     changeLogCompareToRelease: 'lastFullRelease'
     changeLogType: 'commitBased'
-
-- task: DownloadGitHubRelease@0
-  inputs:
-    connection: 'szymon-github'
-    userRepository: 'szymonjozefowicz/trunk-release'
-    defaultVersionType: 'latest'
-    downloadPath: '$(System.ArtifactsDirectory)'

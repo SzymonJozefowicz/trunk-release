@@ -13,8 +13,6 @@ steps:
 - script: |
     ls -lah
     cat index.html
-    git tag $[format('1.1.{0}',variables['Build.BuildId'])]
-    git push --tags
   displayName: View index file and list folder
 - task: GitHubRelease@1
   inputs:
@@ -22,9 +20,10 @@ steps:
     repositoryName: '$(Build.Repository.Name)'
     action: 'create'
     target: '$(Build.SourceVersion)'
-    tagSource: 'gitTag'
-    tagPattern: 'v1.*'
+    tagSource: 'userSpecifiedTag'
+    tag: '$(Build.SourceVersion)'
+    title: '$(Build.SourceVersion)'
     releaseNotesSource: 'inline'
-    releaseNotesInline: 'v1 notes'
+    releaseNotesInline: '$(Build.SourceVersion)'
     changeLogCompareToRelease: 'lastFullRelease'
     changeLogType: 'commitBased'

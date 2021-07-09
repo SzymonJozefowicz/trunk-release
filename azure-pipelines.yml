@@ -8,6 +8,10 @@ trigger:
 
 pr: none
 
+variables:
+  - name: TAG
+    value: $[format('1.0.{0}',variables['Build.BuildId'])]
+
 pool:
   vmImage: ubuntu-latest
 
@@ -15,6 +19,7 @@ steps:
 - script: |
     ls -lah
     cat index.html
+    echo $TAG
   displayName: View index file and list folder
 - task: GitHubRelease@1
   inputs:
@@ -23,8 +28,8 @@ steps:
     action: 'create'
     target: '$(Build.SourceVersion)'
     tagSource: 'userSpecifiedTag'
-    tag: 'v1.0.7'
-    title: 'Release'
+    tag: '$(TAG)'
+    title: 'Release ${TAG}'
     releaseNotesSource: 'inline'
     releaseNotesInline: 'Release $(Build.SourceVersion)'
     changeLogCompareToRelease: 'lastFullRelease'

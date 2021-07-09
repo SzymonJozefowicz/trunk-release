@@ -30,21 +30,15 @@ steps:
     target: '$(Build.SourceVersion)'
     tagSource: 'userSpecifiedTag'
     tag: '$(TAG)'
-    # title: ${RELEASE}
     releaseNotesSource: 'inline'
-    releaseNotesInline: 'Release $(Build.SourceVersion)'
+    # releaseNotesInline: 'Release $(Build.SourceVersion)'
+    releaseNotesFilePath: 'release.md'
     changeLogCompareToRelease: 'lastFullRelease'
     changeLogType: 'commitBased'
-# - task: GitHubRelease@1
-#   inputs:
-#     gitHubConnection: 'szymon-github'
-#     repositoryName: '$(Build.Repository.Name)'
-#     action: 'create'
-#     target: '$(Build.SourceVersion)'
-#     tagSource: 'userSpecifiedTag'
-#     tag: '$(Build.SourceVersion)'
-#     title: 'Release'
-#     releaseNotesSource: 'inline'
-#     releaseNotesInline: 'Release $(Build.SourceVersion)'
-#     changeLogCompareToRelease: 'lastFullRelease'
-#     changeLogType: 'commitBased'
+
+- task: DownloadGitHubRelease@0
+  inputs:
+    connection: 'szymon-github'
+    userRepository: 'szymonjozefowicz/trunk-release'
+    defaultVersionType: 'latest'
+    downloadPath: '$(System.ArtifactsDirectory)'

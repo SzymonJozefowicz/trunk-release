@@ -1,0 +1,76 @@
+
+trigger:
+  - sprint/*
+  
+pr: none
+
+variables:
+  - name: TAG
+    value: $[format('1.0.{0}',variables['Build.BuildId'])]
+  
+  
+stages:
+  - stage: QA
+    jobs:
+      - deployment: DeployQA
+        displayName: Deploy to QA
+        pool:
+          vmImage: 'ubuntu-latest'
+        environment: 'qa'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - script: |
+                    ls -lah
+                    cat index.html
+                    echo $TAG
+                  displayName: View index file and list folder
+  - stage: E2ETestQA
+    jobs:
+      - deployment: E2ETestQA
+        displayName: E2E Test QA
+        pool:
+          vmImage: 'ubuntu-latest'
+        environment: 'qa'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - script: |
+                    ls -lah
+                    echo Run E2E on QA
+                    echo $TAG
+                  displayName: Run E2E on qa env
+  - stage: Prod
+    jobs:
+      - deployment: DeployProd
+        displayName: Deploy to Prod
+        pool:
+          vmImage: 'ubuntu-latest'
+        environment: 'prd'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self                
+                - script: |
+                    ls -lah
+                    cat index.html
+                    echo $TAG
+                  displayName: View index file and list folder
+                - task: GitHubRelease@1
+                  inputs:
+                    gitHubConnection: 'szymon-github'
+                    repositoryName: '$(Build.Repository.Name)'
+                    action: 'create'
+                    target: '$(Build.SourceVersion)'
+                    tagSource: 'userSpecifiedTag'
+                    tag: '$(TAG)'
+                    releaseNotesSource: 'inline'
+                    # releaseNotesInline: 'Release $(Build.SourceVersion)'
+                    releaseNotesFilePath: 'release.md'
+                    changeLogCompareToRelease: 'lastFullRelease'
+                    changeLogType: 'commitBased'

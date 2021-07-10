@@ -1,36 +1,74 @@
-# HTML
-# Archive your static HTML project and save it with the build record.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
 
 trigger:
-- main
-
+  - main
+  
 pr: none
 
 variables:
   - name: TAG
     value: $[format('1.0.{0}',variables['Build.BuildId'])]
-
-pool:
-  vmImage: ubuntu-latest
-
-steps:
-- script: |
-    ls -lah
-    cat index.html
-    echo $TAG
-  displayName: View index file and list folder
-- task: GitHubRelease@1
-  inputs:
-    gitHubConnection: 'szymon-github'
-    repositoryName: '$(Build.Repository.Name)'
-    action: 'create'
-    target: '$(Build.SourceVersion)'
-    tagSource: 'userSpecifiedTag'
-    tag: '$(TAG)'
-    releaseNotesSource: 'inline'
-    # releaseNotesInline: 'Release $(Build.SourceVersion)'
-    releaseNotesFilePath: 'release.md'
-    changeLogCompareToRelease: 'lastFullRelease'
-    changeLogType: 'commitBased'
+  
+  
+stages:
+  - stage: Dev
+    jobs:
+      - deployment: DeployDev
+        displayName: Deploy to Dev
+        pool:
+          vmImage: 'ubuntu-latest'
+        environment: 'dev'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - script: |
+                    ls -lah
+                    cat index.html
+                    echo $TAG
+                  displayName: View index file and list folder
+          
+  - stage: QA
+    jobs:
+      - deployment: DeployQA
+        displayName: Deploy to QA
+        pool:
+          vmImage: 'ubuntu-latest'
+        environment: 'qa'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - script: |
+                    ls -lah
+                    cat index.html
+                    echo $TAG
+                  displayName: View index file and list folder
+  - stage: Prod
+    jobs:
+      - deployment: DeployProd
+        displayName: Deploy to Prod
+        pool:
+          vmImage: 'ubuntu-latest'
+        environment: 'prd'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - script: |
+                    ls -lah
+                    cat index.html
+                    echo $TAG
+                  displayName: View index file and list folder
+                - task: GitHubRelease@1
+                  inputs:
+                    gitHubConnection: 'szymon-github'
+                    repositoryName: '$(Build.Repository.Name)'
+                    action: 'create'
+                    target: '$(Build.SourceVersion)'
+                    tagSource: 'userSpecifiedTag'
+                    tag: '$(TAG)'
+                    releaseNotesSource: 'inline'
+                    # releaseNotesInline: 'Release $(Build.SourceVersion)'
+                    releaseNotesFilePath: 'release.md'
+                    changeLogCompareToRelease: 'lastFullRelease'
+                    changeLogType: 'commitBased'

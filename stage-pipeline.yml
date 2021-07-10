@@ -54,7 +54,11 @@ stages:
           runOnce:
             deploy:
               steps:
-                - script: cat index.html
+                - script: |
+                    ls -lah
+                    cat index.html
+                    echo $TAG
+                  displayName: View index file and list folder
                 - task: GitHubRelease@1
                   inputs:
                     gitHubConnection: 'szymon-github'

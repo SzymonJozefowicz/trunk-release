@@ -1,6 +1,6 @@
 
 trigger:
-  - main
+  - sprint/*
   
 pr: none
 
@@ -21,12 +21,29 @@ stages:
           runOnce:
             deploy:
               steps:
-                - checkout: 
+                - checkout: self
                 - script: |
                     ls -lah
                     cat index.html
                     echo $TAG
                   displayName: View index file and list folder
+  - stage: E2ETestDev
+    jobs:
+      - deployment: E2ETestDev
+        displayName: E2E Test Dev
+        pool:
+          vmImage: 'ubuntu-latest'
+        environment: 'dev'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - script: |
+                    ls -lah
+                    echo Run E2E on dev
+                    echo $TAG
+                  displayName: Run E2E on dev env
           
   - stage: QA
     jobs:
@@ -39,12 +56,29 @@ stages:
           runOnce:
             deploy:
               steps:
-                - checkout: 
+                - checkout: self
                 - script: |
                     ls -lah
                     cat index.html
                     echo $TAG
                   displayName: View index file and list folder
+  - stage: E2ETestQA
+    jobs:
+      - deployment: E2ETestQA
+        displayName: E2E Test QA
+        pool:
+          vmImage: 'ubuntu-latest'
+        environment: 'qa'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - script: |
+                    ls -lah
+                    echo Run E2E on QA
+                    echo $TAG
+                  displayName: Run E2E on qa env
   - stage: Prod
     jobs:
       - deployment: DeployProd
@@ -56,7 +90,7 @@ stages:
           runOnce:
             deploy:
               steps:
-                - checkout:                 
+                - checkout: self                
                 - script: |
                     ls -lah
                     cat index.html

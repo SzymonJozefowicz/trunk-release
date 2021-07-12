@@ -6,7 +6,7 @@ pr: none
 
 variables:
   - name: TAG
-    value: $[format('1.0.{0}',variables['Build.BuildId'])]
+    value: $[format('1.0.{0}',variables['Build.BuildNumber'])]
   
   
 stages:
